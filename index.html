@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>studyMin</title>
+
+    <script type="module" src="index.js" tyle="text/javascript"></script>
+
+    <!-- UIkit CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/css/uikit.min.css"
+    />
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit-icons.min.js"></script>
+  </head>
+  <body>
+    <div class="uk-section uk-section-primary">
+      <h3>경력</h3>
+    </div>
+    <hr class="uk-divider-icon" />
+    <div class="uk-container">
+      <section class="introContainer"></section>
+      <button
+        id="toggleShowButton"
+        class="uk-button uk-button-default uk-width-1-1 uk-margin-small-bottom"
+      >
+        입력 폼 나타내기
+      </button>
+      <div class="inputArea">
+        <div class="uk-form-controls">
+          <input
+            class="uk-input"
+            id="inputdesc"
+            type="text"
+            placeholder="경력"
+          />
+        </div>
+        <div class="uk-form-controls">
+          <input
+            class="uk-input"
+            id="inputmodidt"
+            type="text"
+            placeholder="날짜"
+          />
+        </div>
+        <button
+          id="plusButton"
+          class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom"
+        >
+          추가
+        </button>
+      </div>
+    </div>
+  </body>
+</html>
