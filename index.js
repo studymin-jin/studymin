@@ -18,8 +18,15 @@ const getIntro = async () => {
 };
 
 const postIntro = async (Obj) => {
-  let id = await API.postIntro(Obj);
-  console.log(id);
+  if(_accessToken != null)
+  {
+    let id = await API.postIntro(Obj,_accessToken);
+    console.log(id);
+  }else
+  {
+    alert("로그인해주세요");
+    return "";
+  }
 };
 
 const updateIntro = async (Obj) => {
@@ -37,6 +44,7 @@ const renderTable = (items) => {
   let plusCardButton = document.querySelector("#plusButton");
   plusCardButton.onclick = plusCard;
 
+  console.log(_config);
   items.forEach((item) => {
     console.log(item);
 
@@ -87,7 +95,9 @@ const plusCard = (event) => {
   let modidt = document.querySelector("#inputmodidt");
   cardElement.desc = desc.value;
   cardElement.modidt = modidt.value;
+
   let id = postIntro(cardElement);
+
 
   desc.value = "";
   modidt.value = "";

@@ -1,8 +1,9 @@
 class APIRequest {
-  constructor(method, path, body = null) {
+  constructor(method, path, body = null,accesstoken=null) {
     this.method = method;
     this.url = HOST + path;
     this.body = body;
+    this.accesstoken = accesstoken;
   }
 }
 
@@ -17,6 +18,7 @@ const APIProcessor = async (request) => {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        "X-Cog-Token": request.accesstoken,
       },
       body: request.body ? JSON.stringify(request.body) : null, // body data type must match "Content-Type" header
     });
@@ -38,11 +40,11 @@ const APIProcessor = async (request) => {
 export default class APIHandler {
   constructor() {}
 
-  async postIntro(Obj) {
+  async postIntro(Obj,accesstoken) {
     const request = new APIRequest("POST", "/intro/", {
       desc: Obj.desc,
       modidt: Obj.modidt,
-    });
+    },accesstoken);
     const response = await APIProcessor(request);
     if (response !== "Error") {
       console.log(response);

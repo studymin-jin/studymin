@@ -1,89 +1,123 @@
 <!DOCTYPE html>
+
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOGIN Example</title>
+  <head>
+    <meta charset="utf-8">
+  
+  <!-- Cognito -->
+  <script src="login/amazon-cognito-auth.min.js"></script>
+  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.16.min.js"></script> 
+  <script src="login/amazon-cognito-identity.min.js"></script> 
+  <script src="login/config.js"></script>
 
-    <!-- Cognito -->
-    <script src="login/amazon-cognito-auth.min.js"></script>
-    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.16.min.js"></script> 
-	<script src="login/amazon-cognito-identity.min.js"></script> 
-	<script src="login/config.js"></script>
+  </head>
+  <body>
+    <form>
+      <h1>Please sign in</h1>
 
-    <!-- UIkit CSS -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/css/uikit.min.css"
-    />
-    <!-- UIkit JS -->
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit-icons.min.js"></script>
-</head>
-<body>
-  <input type="personalname" class="form-control" id="personalnameRegister" placeholder="Name" pattern=".*" required>
-  <input type="email" class="form-control" id="emailInputRegister" placeholder="Email" pattern=".*" required>
-  <input type="password" class="form-control" id="passwordInputRegister" placeholder="Password" pattern=".*" required>
-  <input type="password" class="form-control" id="confirmationpassword" placeholder="Confirm Password" pattern=".*" required>
-  <button id="mainbutton" class="btn btn-lg btn-primary btn-block" type="button" onclick="registerButton()" >Register</button>
+      <input type="text" id="inputUsername"  placeholder="Email address" name="username" required autofocus>
+      <input type="password" id="inputPassword"  placeholder="Password" name="password" required>    
+      <button type="button" onclick="signInButton()">Sign in</button>
+      <a href="register.html">회원가입</button>
+        <button type="button" onclick="forgotpasswordbutton()">비밀번호찾기</button>
+    </form>
 
-  <script>
 
-		var username;
-		var password;
-		var personalname;
-		var poolData;
-			
-	  function registerButton() {
+<script>
+
+window.onload = function(){
+  var data = { 
+      UserPoolId : _config.cognito.userPoolId,
+          ClientId : _config.cognito.clientId
+      };
+      var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+      var cognitoUser = userPool.getCurrentUser();
+  //비로그인 상태에서만 들어올 수 있음
+      if (cognitoUser != null) {
+        //로그인상태면 리다이렉트
+        window.location = "index.html";
+      }
+}
+
+  function signInButton() {
+    
+	var authenticationData = {
+        Username : document.getElementById("inputUsername").value,
+        Password : document.getElementById("inputPassword").value,
+    };
+	
+    var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+    
+	var poolData = {
+        UserPoolId : _config.cognito.userPoolId, // Your user pool id here
+        ClientId : _config.cognito.clientId, // Your client id here
+    };
+	
+    var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+	
+    var userData = {
+        Username : document.getElementById("inputUsername").value,
+        Pool : userPool,
+    };
+	
+    var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+    
+	cognitoUser.authenticateUser(authenticationDetails, {
+        onSuccess: function (result) {
+			window._accessToken = result.getAccessToken().getJwtToken();
+      console.log(_accessToken);	
+      window.location = "index.html";
+        },
+
+        onFailure: function(err) {
+            alert(err.message || JSON.stringify(err));
+        },
+    });
+  }
+
+  function forgotpasswordbutton() {
+	var poolData = {
+        UserPoolId : _config.cognito.userPoolId, // Your user pool id here
+        ClientId : _config.cognito.clientId, // Your client id here
+    };
+	
+    var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+	
+    if(document.getElementById("inputUsername").value="")
+    {
+      alert("EMAIL을 입력해주세요");
+    }
+
+    var userData = {
+        Username : document.getElementById("inputUsername").value,
+        Pool : userPool,
+    };
+	
+    var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
 		
-		personalname =  document.getElementById("personalnameRegister").value;	
-		username = document.getElementById("emailInputRegister").value;
-		
-		if (document.getElementById("passwordInputRegister").value != document.getElementById("confirmationpassword").value) {
-			alert("Passwords Do Not Match!")
-			throw "Passwords Do Not Match!"
-		} else {
-			password =  document.getElementById("passwordInputRegister").value;	
-		}
-		
-		poolData = {
-				UserPoolId : _config.cognito.userPoolId, // Your user pool id here
-				ClientId : _config.cognito.clientId // Your client id here
-			};		
-		var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-
-		var attributeList = [];
-		
-		var dataEmail = {
-			Name : 'email', 
-			Value : username, //get from form field
-		};
-		
-		var dataPersonalName = {
-			Name : 'name', 
-			Value : personalname, //get from form field
-		};
-
-		var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
-		var attributePersonalName = new AmazonCognitoIdentity.CognitoUserAttribute(dataPersonalName);
-		
-		
-		attributeList.push(attributeEmail);
-		attributeList.push(attributePersonalName);
-
-		userPool.signUp(username, password, attributeList, null, function(err, result){
-			if (err) {
-				alert(err.message || JSON.stringify(err));
-				return;
-			}
-			let cognitoUser = result.user;
-			console.log('user name is ' + cognitoUser.getUsername());
-			//change elements of page
-			//document.getElementById("titleheader").innerHTML = "Check your email for a verification link";
-			alert("이메일을 확인해주세요");
-		});
-	  }
-
-	</script>
+    cognitoUser.forgotPassword({
+        onSuccess: function (result) {
+            console.log('call result: ' + result);
+        },
+        onFailure: function(err) {
+            alert(err);
+			console.log(err);
+        },
+        inputVerificationCode() {
+            var verificationCode = prompt('인증코드확인 ' ,'');
+            var newPassword = prompt('새비밀번호 입력 ' ,'');
+            cognitoUser.confirmPassword(verificationCode, newPassword, this);
+        }
+    });
+  }
+</script>
 </body>
 </html>
+
+
+
+
+
+
+
+

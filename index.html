@@ -7,6 +7,10 @@
 
     <script type="module" src="index.js" tyle="text/javascript"></script>
 
+  <!--Cognito JavaScript-->
+  <script src="login/amazon-cognito-identity.min.js"></script> 
+  <script src="login/config.js"></script>
+
     <!-- UIkit CSS -->
     <link
       rel="stylesheet"
@@ -17,6 +21,103 @@
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit-icons.min.js"></script>
   </head>
   <body>
+    <!-- Nav Bar -->
+    <nav class="uk-navbar-container" uk-navbar>
+      <div class="uk-navbar-left">
+  
+          <ul class="uk-navbar-nav">
+              <li class="uk-active"><a href="#">Active</a></li>
+              <li>
+                  <a href="#">Parent</a>
+                  <div class="uk-navbar-dropdown">
+                      <ul class="uk-nav uk-navbar-dropdown-nav">
+                          <li class="uk-active"><a href="#">Active</a></li>
+                          <li><a href="#">Item</a></li>
+                          <li class="uk-nav-header">Header</li>
+                          <li><a href="#">Item</a></li>
+                          <li><a href="#">Item</a></li>
+                          <li class="uk-nav-divider"></li>
+                          <li><a href="#">Item</a></li>
+                      </ul>
+                  </div>
+              </li>
+              <li><a href="#">Item</a></li>
+          </ul>
+  
+      </div>
+      <div class="uk-navbar-right">
+  
+          <ul class="uk-navbar-nav">
+              <li>
+                <a id="nav_personalInfo"></a>
+              </li>
+              <li>
+                  <a id="nav_loginInfo"></a>
+              </li>
+          </ul>
+      </div>
+  </nav>
+  <!-- login판정 -->
+  <script>
+    var data = { 
+      UserPoolId : _config.cognito.userPoolId,
+          ClientId : _config.cognito.clientId
+      };
+      var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+      var cognitoUser = userPool.getCurrentUser();
+    
+    window.onload = function(){
+      window._accessToken = null;
+      if (cognitoUser != null) {
+          cognitoUser.getSession(function(err, session) {
+              if (err) {
+                  alert(err);
+                  return;
+              }
+              console.log('session validity: ' + session.isValid());
+              if(session.isValid())
+            {
+              //토큰저장
+              window._accessToken = session.accessToken.jwtToken;
+
+              //로그인상태
+              var personalInfoBtn = document.getElementById("nav_loginInfo");
+              personalInfoBtn.href = "";
+              personalInfoBtn.innerHTML = "로그아웃";
+              personalInfoBtn.onclick=signOut;
+              console.log(personalInfoBtn);
+
+              cognitoUser.getUserAttributes(function(err, result) {
+              if (err) {
+                console.log(err);
+                return;
+              }
+              console.log(result);
+              document.getElementById("nav_personalInfo").innerHTML = result[2].getValue();	
+            });
+          }	
+        });			
+      }
+      else{
+              //비로그인 상태
+              var personalInfoBtn = document.getElementById("nav_loginInfo");
+              personalInfoBtn.innerHTML = "로그인";
+              personalInfoBtn.onclick=null;
+              personalInfoBtn.href="login.html";
+            }
+  }
+    function signOut(){
+        if (cognitoUser != null) {
+            cognitoUser.signOut();
+            _accessToken = null;
+            var personalInfoBtn = document.getElementById("nav_loginInfo");
+            personalInfoBtn.onclick=null;
+            personalInfoBtn.innerHTML = "로그인";
+          }
+    }
+      </script>
+
+
     <div class="uk-section uk-section-primary">
       <h3>경력</h3>
     </div>
