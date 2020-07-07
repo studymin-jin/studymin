@@ -46,7 +46,7 @@ export default class APIHandler {
       modidt: Obj.modidt,
     },accesstoken);
     const response = await APIProcessor(request);
-    if (response !== "Error") {
+    if (response != "Error") {
       console.log(response);
       return response.id;
     } else {

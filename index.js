@@ -21,12 +21,9 @@ const postIntro = async (Obj) => {
   if(_accessToken != null)
   {
     let id = await API.postIntro(Obj,_accessToken);
-    console.log(id);
-  }else
-  {
-    alert("로그인해주세요");
-    return "";
+    return id;
   }
+  return "";
 };
 
 const updateIntro = async (Obj) => {
@@ -97,14 +94,19 @@ const plusCard = (event) => {
   cardElement.modidt = modidt.value;
 
   let id = postIntro(cardElement);
-
+  id.then((data)=>{
+    if(data == null){
+      alert("로그인 후 다시 입력해주세요");
+    }else
+    {
+      alert("입력성공 f5눌러주세요");
+    }
+  })
 
   desc.value = "";
   modidt.value = "";
 
-  if (id != "") {
-    alert("입력완료 // f5눌러서 새로고침 이건 나중에 새로고침 되도록 고쳐야함");
-  }
+  
 };
 
 const toggleShow = (event) => {
