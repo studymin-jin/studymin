@@ -23,7 +23,7 @@ const postIntro = async (Obj) => {
     let id = await API.postIntro(Obj,_accessToken);
     return id;
   }
-  return "";
+  return "needLogin";
 };
 
 const updateIntro = async (Obj) => {
@@ -95,7 +95,7 @@ const plusCard = (event) => {
 
   let id = postIntro(cardElement);
   id.then((data)=>{
-    if(data == null){
+    if(data == "needLogin"){
       alert("로그인 후 다시 입력해주세요");
     }else
     {
