@@ -19,6 +19,10 @@
     <!-- UIkit JS -->
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit-icons.min.js"></script>
+
+    <!-- FullCalendar -->
+    <link href='./googleCalendar/main.css' rel='stylesheet' />
+    <script src='./googleCalendar/main.js'></script>
   </head>
   <body>
     <!-- Nav Bar -->
@@ -155,5 +159,46 @@
         </button>
       </div>
     </div>
+    <div class="uk-section uk-section-muted">
+      <div class="uk-container">
+        <div id='loading'>loading...</div>
+        <div id='calendar'></div>
+      </div>
+  </div>
+  <script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var calendarEl = document.getElementById('calendar');
+  
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+  
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'timeGridWeek,dayGridMonth,listWeek'
+        },
+  
+        displayEventTime: true, // don't show the time column in list view
+  
+        // THIS KEY WON'T WORK IN PRODUCTION!!!
+        // To make your own Google API key, follow the directions here:
+        // http://fullcalendar.io/docs/google_calendar/
+        googleCalendarApiKey: 'AIzaSyCzn-xlN8KRw7dNUt22iuKjRH5mo-KOmnc',
+        // US Holidays
+        events: 'studymin1025@gmail.com',
+  
+        loading: function(bool) {
+          document.getElementById('loading').style.display =
+            bool ? 'block' : 'none';
+        }
+  
+      });
+  
+      calendar.render();
+    });
+  
+  </script>
   </body>
+
+ 
 </html>
