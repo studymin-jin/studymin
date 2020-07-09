@@ -1,0 +1,33 @@
+google API를 쓰기위해선 3가지 인증방식이 있음
+
+API KEY인증
+
+OAuth2인증
+
+Service Account인증
+
+----------------------------------
+
+Service Account인증방식
+
+여러사람이 한 달력에 접근할 때 로그인 없이 접근하기 위해서는 API KEY인증이나 Service Account인증으로 해야함
+
+calendar_v1은 Service Account인증방식임
+
+Service Account인증방식은 토큰을 만들어주는 라이브러리가 없어서
+
+개발자가 토큰을 직접 구글에서 원하는 방식으로 만든다음 직접 xhr 리퀘스트를 던져야함;
+
+결과값을 FullCalendar에 표시해 주기 위해서 가공해야 할 필요가 있음
+
+※가공했는데 반복 스케줄 (매월 월화수목) 인 경우를 인식하지 못함 > 때려침
+
+----------------------------------------
+
+API KEY인증방식
+
+FullCalendar에서 API KEY인증방식을 지원해주고 있음
+
+(만들어져 있는 형식대로 APIKEY를 넣으면 알아서 결과값까지 가공해서 보여줌)
+
+calendar_v2가 API KEY 인증방식
