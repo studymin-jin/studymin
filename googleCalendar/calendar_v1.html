@@ -6,10 +6,12 @@
   <script language="JavaScript" type="text/javascript"
         src="https://kjur.github.io/jsrsasign/jsrsasign-latest-all-min.js">
 </script>
+<link href='main.css' rel='stylesheet' />
+<script src='main.js'></script>
   <title>Calendar</title>
 </head>
 <body>
-  
+    <div id='calendar'></div>
 </body>
 <script>
 (() => {
@@ -41,6 +43,8 @@ XHR.addEventListener('load', function(event) {
     var response = JSON.parse(XHR.responseText);
     token = response["access_token"]
     console.log(token);
+
+    listUpcomingEvents();
 });
 
 // We define what will happen in case of error
@@ -52,15 +56,47 @@ XHR.open('POST', 'https://www.googleapis.com/oauth2/v3/token');
 XHR.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 XHR.send(urlEncodedData);
 
-/* gapi.analytics.auth.authorize({
-    serverAuth: {
-        access_token: token
+var calendarID = "studymin1025@gmail.com";
+
+function listUpcomingEvents() {
+var xhr = new XMLHttpRequest();
+xhr.onreadystatechange = function() { // 요청에 대한 콜백
+if (xhr.readyState === xhr.DONE) { // 요청이 완료되면
+    if (xhr.status === 200 || xhr.status === 201) {
+        var response=JSON.parse(xhr.responseText);
+        console.log(response);
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+        },
+        initialDate: '2020-06-12',
+        editable: true,
+        navLinks: true, // can click day/week names to navigate views
+        dayMaxEvents: true, // allow "more" link when too many events
+        events: FullCalendar.gcalItemsToRawEventDefs(response.items,response.timeZone)
+        });
+
+calendar.render();
+
+        console.log(response);
+        for (var i in response.items){
+            // 予定開始日時/終了日時とイベントIDを表示
+            var a = response.items[i];
+            console.log('start:' + a.start.dateTime + ' end:' + a.end.dateTime + 
+                ' summary:' + a.summary + ' eventid:' + a.id + 'recurrence:' + a.recurrence);
+            }
+    } else {
+        console.error(xhr.responseText);
     }
-}); */
-
+}
+};
+xhr.open('GET', 'https://content.googleapis.com/calendar/v3/calendars/'+ calendarID +'/events?access_token='+token); // 메소드와 주소 설정
+xhr.send(); // 요청 전송 
+}
 })();
-
-
-
 </script>
 </html>
