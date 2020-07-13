@@ -7,80 +7,115 @@
 
     <script type="module" src="index.js" tyle="text/javascript"></script>
 
-  <!--Cognito JavaScript-->
-  <script src="login/amazon-cognito-identity.min.js"></script> 
-  <script src="login/config.js"></script>
+    <!--Cognito JavaScript-->
+    <script src="login/amazon-cognito-identity.min.js"></script>
+    <script src="login/config.js"></script>
 
     <!-- UIkit CSS -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/css/uikit.min.css"
     />
+    <link rel="stylesheet" href="uikit/custom_navbar.css" />
     <!-- UIkit JS -->
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit-icons.min.js"></script>
 
     <!-- FullCalendar -->
-    <link href='./googleCalendar/main.css' rel='stylesheet' />
-    <script src='./googleCalendar/main.js'></script>
+    <link href="./googleCalendar/main.css" rel="stylesheet" />
+    <script src="./googleCalendar/main.js"></script>
   </head>
   <body>
     <!-- Nav Bar -->
-    <nav class="uk-navbar-container" uk-navbar>
-      <div class="uk-navbar-left">
-  
+    <section id="mainnav">
+      <nav class="uk-container" uk-navbar uk-sticky>
+        <button
+          type="button"
+          class="navbar-toggle uk-hidden@m"
+          uk-toggle="target:.toggle-target; cls:collapsed"
+        >
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+
+        <div class="uk-navbar-right toggle-target collapsed">
           <ul class="uk-navbar-nav">
-              <li class="uk-active"><a href="#">Active</a></li>
-              <li>
-                  <a href="#">Parent</a>
-                  <div class="uk-navbar-dropdown">
-                      <ul class="uk-nav uk-navbar-dropdown-nav">
-                          <li class="uk-active"><a href="#">Active</a></li>
-                          <li><a href="#">Item</a></li>
-                          <li class="uk-nav-header">Header</li>
-                          <li><a href="#">Item</a></li>
-                          <li><a href="#">Item</a></li>
-                          <li class="uk-nav-divider"></li>
-                          <li><a href="#">Item</a></li>
-                      </ul>
-                  </div>
-              </li>
-              <li><a href="#">Item</a></li>
+            <li class="uk-active">
+              <a
+                href="#section_logo"
+                uk-scroll
+                uk-toggle="target:.toggle-target; cls:collapsed"
+                >스터디민</a
+              >
+            </li>
+            <li>
+              <a
+                href="#section_carier"
+                uk-scroll
+                uk-toggle="target:.toggle-target; cls:collapsed"
+                >경력</a
+              >
+            </li>
+            <li>
+              <a
+                href="#section_calendar"
+                uk-scroll
+                uk-toggle="target:.toggle-target; cls:collapsed"
+                >달력</a
+              >
+            </li>
+            <li>
+              <a id="nav_loginInfo"></a>
+            </li>
           </ul>
-  
+        </div>
+      </nav>
+    </section>
+    <!--
+    <nav class="uk-navbar-container" uk-navbar uk-sticky>
+      <div class="uk-navbar-left">
+        <ul class="uk-navbar-nav">
+          <li class="uk-active">
+            <a href="#section_logo" uk-scroll>스터디민</a>
+          </li>
+          <li>
+            <a href="#section_carier" uk-scroll>경력</a>
+          </li>
+          <li><a href="#section_calendar" uk-scroll>달력</a></li>
+        </ul>
       </div>
       <div class="uk-navbar-right">
-  
-          <ul class="uk-navbar-nav">
-              <li>
-                <a id="nav_personalInfo"></a>
-              </li>
-              <li>
-                  <a id="nav_loginInfo"></a>
-              </li>
-          </ul>
+        <ul class="uk-navbar-nav">
+          <li>
+            <a id="nav_personalInfo"></a>
+          </li>
+          <li>
+            <a id="nav_loginInfo"></a>
+          </li>
+        </ul>
       </div>
-  </nav>
-  <!-- login판정 -->
-  <script>
-    var data = { 
-      UserPoolId : _config.cognito.userPoolId,
-          ClientId : _config.cognito.clientId
+    </nav>-->
+    <!-- login판정 -->
+    <script>
+      var data = {
+        UserPoolId: _config.cognito.userPoolId,
+        ClientId: _config.cognito.clientId,
       };
       var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
       var cognitoUser = userPool.getCurrentUser();
-    
-    window.onload = function(){
-      window._accessToken = null;
-      if (cognitoUser != null) {
-          cognitoUser.getSession(function(err, session) {
-              if (err) {
-                  alert(err);
-                  return;
-              }
-              console.log('session validity: ' + session.isValid());
-              if(session.isValid())
-            {
+
+      window.onload = function () {
+        window._accessToken = null;
+        if (cognitoUser != null) {
+          cognitoUser.getSession(function (err, session) {
+            if (err) {
+              alert(err);
+              return;
+            }
+            console.log("session validity: " + session.isValid());
+            if (session.isValid()) {
               //토큰저장
               window._accessToken = session.accessToken.jwtToken;
 
@@ -88,117 +123,122 @@
               var personalInfoBtn = document.getElementById("nav_loginInfo");
               personalInfoBtn.href = "";
               personalInfoBtn.innerHTML = "로그아웃";
-              personalInfoBtn.onclick=signOut;
+              personalInfoBtn.onclick = signOut;
               console.log(personalInfoBtn);
 
-              cognitoUser.getUserAttributes(function(err, result) {
-              if (err) {
-                console.log(err);
-                return;
-              }
-              console.log(result);
-              document.getElementById("nav_personalInfo").innerHTML = result[2].getValue();	
-            });
-          }	
-        });			
-      }
-      else{
-              //비로그인 상태
-              var personalInfoBtn = document.getElementById("nav_loginInfo");
-              personalInfoBtn.innerHTML = "로그인";
-              personalInfoBtn.onclick=null;
-              personalInfoBtn.href="login.html";
+              cognitoUser.getUserAttributes(function (err, result) {
+                if (err) {
+                  console.log(err);
+                  return;
+                }
+                console.log(result);
+              });
             }
-  }
-    function signOut(){
-        if (cognitoUser != null) {
-            cognitoUser.signOut();
-            _accessToken = null;
-            var personalInfoBtn = document.getElementById("nav_loginInfo");
-            personalInfoBtn.onclick=null;
-            personalInfoBtn.innerHTML = "로그인";
-          }
-    }
-      </script>
-
-
-    <div class="uk-section uk-section-primary">
-      <h3>경력</h3>
-    </div>
-    <hr class="uk-divider-icon" />
-    <div class="uk-container">
-      <section class="introContainer"></section>
-      <button
-        id="toggleShowButton"
-        class="uk-button uk-button-default uk-width-1-1 uk-margin-small-bottom"
-      >
-        입력 폼 나타내기
-      </button>
-      <div class="inputArea">
-        <div class="uk-form-controls">
-          <input
-            class="uk-input"
-            id="inputdesc"
-            type="text"
-            placeholder="경력"
-          />
-        </div>
-        <div class="uk-form-controls">
-          <input
-            class="uk-input"
-            id="inputmodidt"
-            type="text"
-            placeholder="날짜"
-          />
-        </div>
-        <button
-          id="plusButton"
-          class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom"
-        >
-          추가
-        </button>
-      </div>
-    </div>
-    <div class="uk-section uk-section-muted">
-      <div class="uk-container">
-        <div id='loading'>loading...</div>
-        <div id='calendar'></div>
-      </div>
-  </div>
-  <script>
-
-    document.addEventListener('DOMContentLoaded', function() {
-      var calendarEl = document.getElementById('calendar');
-  
-      var calendar = new FullCalendar.Calendar(calendarEl, {
-  
-        headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'timeGridWeek,dayGridMonth,listWeek'
-        },
-  
-        displayEventTime: true, // don't show the time column in list view
-  
-        // THIS KEY WON'T WORK IN PRODUCTION!!!
-        // To make your own Google API key, follow the directions here:
-        // http://fullcalendar.io/docs/google_calendar/
-        googleCalendarApiKey: 'AIzaSyCzn-xlN8KRw7dNUt22iuKjRH5mo-KOmnc',
-        // US Holidays
-        events: 'studymin1025@gmail.com',
-  
-        loading: function(bool) {
-          document.getElementById('loading').style.display =
-            bool ? 'block' : 'none';
+          });
+        } else {
+          //비로그인 상태
+          var personalInfoBtn = document.getElementById("nav_loginInfo");
+          personalInfoBtn.innerHTML = "로그인";
+          personalInfoBtn.onclick = null;
+          personalInfoBtn.href = "login.html";
         }
-  
-      });
-  
-      calendar.render();
-    });
-  
-  </script>
-  </body>
+      };
+      function signOut() {
+        if (cognitoUser != null) {
+          cognitoUser.signOut();
+          _accessToken = null;
+          var personalInfoBtn = document.getElementById("nav_loginInfo");
+          personalInfoBtn.onclick = null;
+          personalInfoBtn.innerHTML = "로그인";
+        }
+      }
+    </script>
 
- 
+    <div class="uk-section" id="section_logo">
+      <div class="uk-cover-container uk-height-medium">
+        <div class="uk-text-center" uk-parallax="stroke: 100%; viewport: 0.7">
+          <img src="images/logo.svg" alt="" uk-svg />
+        </div>
+      </div>
+    </div>
+
+    <div class="uk-section" id="section_carier">
+      <div class="uk-container">
+        <h3 class="uk-margin-top">경력</h3>
+        <hr class="uk-divider-icon" />
+        <div class="uk-container">
+          <section class="introContainer"></section>
+          <button
+            id="toggleShowButton"
+            class="uk-button uk-button-default uk-width-1-1 uk-margin-small-bottom"
+          >
+            입력 폼 나타내기
+          </button>
+          <div class="inputArea">
+            <div class="uk-form-controls">
+              <input
+                class="uk-input"
+                id="inputdesc"
+                type="text"
+                placeholder="경력"
+              />
+            </div>
+            <div class="uk-form-controls">
+              <input
+                class="uk-input"
+                id="inputmodidt"
+                type="text"
+                placeholder="날짜"
+              />
+            </div>
+            <button
+              id="plusButton"
+              class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom"
+            >
+              추가
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="uk-section uk-section-muted" id="section_calendar">
+      <div class="uk-container">
+        <div id="loading" class="uk-margin-top">loading...</div>
+        <div id="calendar" class="uk-margin-top"></div>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var calendarEl = document.getElementById("calendar");
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: "listWeek",
+          headerToolbar: {
+            right: "timeGridWeek,listWeek",
+          },
+          slotMinTime: "09:00:00",
+          scrollTime: "09:00:00",
+          allDaySlot: false,
+
+          displayEventTime: true, // don't show the time column in list view
+
+          // THIS KEY WON'T WORK IN PRODUCTION!!!
+          // To make your own Google API key, follow the directions here:
+          // http://fullcalendar.io/docs/google_calendar/
+          googleCalendarApiKey: "AIzaSyCzn-xlN8KRw7dNUt22iuKjRH5mo-KOmnc",
+          // US Holidays
+          events: "studymin1025@gmail.com",
+
+          loading: function (bool) {
+            document.getElementById("loading").style.display = bool
+              ? "block"
+              : "none";
+          },
+        });
+
+        calendar.render();
+      });
+    </script>
+  </body>
 </html>

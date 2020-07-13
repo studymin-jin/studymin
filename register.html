@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LOGIN Example</title>
 
     <!-- Cognito -->
     <script src="login/amazon-cognito-auth.min.js"></script>
-    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.16.min.js"></script> 
-	<script src="login/amazon-cognito-identity.min.js"></script> 
-	<script src="login/config.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.16.min.js"></script>
+    <script src="login/amazon-cognito-identity.min.js"></script>
+    <script src="login/config.js"></script>
 
     <!-- UIkit CSS -->
     <link
@@ -19,86 +19,206 @@
     <!-- UIkit JS -->
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit-icons.min.js"></script>
-</head>
-<body>
-  <input type="personalname" class="form-control" id="personalnameRegister" placeholder="Name" pattern=".*" required>
-  <input type="email" class="form-control" id="emailInputRegister" placeholder="Email" pattern=".*" required>
-  <input type="password" class="form-control" id="passwordInputRegister" placeholder="Password" pattern=".*" required>
-  <input type="password" class="form-control" id="confirmationpassword" placeholder="Confirm Password" pattern=".*" required>
-  <button id="mainbutton" class="btn btn-lg btn-primary btn-block" type="button" onclick="registerButton()" >Register</button>
+  </head>
+  <body>
+    <!--<input
+      type="personalname"
+      class="form-control"
+      id="personalnameRegister"
+      placeholder="Name"
+      pattern=".*"
+      required
+    />
+    <input
+      type="email"
+      class="form-control"
+      id="emailInputRegister"
+      placeholder="Email"
+      pattern=".*"
+      required
+    />
+    <input
+      type="password"
+      class="form-control"
+      id="passwordInputRegister"
+      placeholder="Password"
+      pattern=".*"
+      required
+    />
+    <input
+      type="password"
+      class="form-control"
+      id="confirmationpassword"
+      placeholder="Confirm Password"
+      pattern=".*"
+      required
+    />
+    <button
+      id="mainbutton"
+      class="btn btn-lg btn-primary btn-block"
+      type="button"
+      onclick="registerButton()"
+    >
+      Register
+    </button>-->
+    <div
+      class="uk-section uk-section-muted uk-flex uk-flex-middle uk-animation-fade"
+      uk-height-viewport
+    >
+      <div class="uk-width-1-1">
+        <div class="uk-container">
+          <div class="uk-grid-margin uk-grid uk-grid-stack" uk-grid>
+            <div class="uk-width-1-1@m">
+              <div
+                class="uk-margin uk-width-large uk-margin-auto uk-card uk-card-default uk-card-body uk-box-shadow-large"
+              >
+                <h3 class="uk-card-title uk-text-center">
+                  스터디민에 오신걸 환영합니다.
+                </h3>
+                <div class="uk-margin">
+                  <div class="uk-inline uk-width-1-1">
+                    <span class="uk-form-icon" uk-icon="icon: user"></span>
+                    <input
+                      id="personalnameRegister"
+                      class="uk-input uk-form-large"
+                      type="text"
+                      placeholder="이름"
+                    />
+                  </div>
+                </div>
+                <div class="uk-margin">
+                  <div class="uk-inline uk-width-1-1">
+                    <span class="uk-form-icon" uk-icon="icon: mail"></span>
+                    <input
+                      id="emailInputRegister"
+                      class="uk-input uk-form-large"
+                      type="text"
+                      placeholder="이메일"
+                    />
+                  </div>
+                </div>
+                <div class="uk-margin">
+                  <div class="uk-inline uk-width-1-1">
+                    <span class="uk-form-icon" uk-icon="icon: lock"></span>
+                    <input
+                      id="passwordInputRegister"
+                      class="uk-input uk-form-large"
+                      type="password"
+                      placeholder="비밀번호 (숫자 8자리 이상) "
+                    />
+                  </div>
+                </div>
 
-  <script>
+                <div class="uk-margin">
+                  <div class="uk-inline uk-width-1-1">
+                    <span class="uk-form-icon" uk-icon="icon: lock"></span>
+                    <input
+                      id="confirmationpassword"
+                      class="uk-input uk-form-large"
+                      type="password"
+                      placeholder="비밀번호 확인 "
+                    />
+                  </div>
+                </div>
 
-		var username;
-		var password;
-		var personalname;
-		var poolData;
+                <div class="uk-margin">
+                  <button
+                    class="uk-button uk-button-primary uk-button-large uk-width-1-1"
+                    id="mainbutton"
+                    onclick="registerButton()"
+                  >
+                    회원가입
+                  </button>
+                </div>
+                <div class="uk-text-small uk-text-center">
+                  아이디가 있으신 분은 로그인 화면에
+                  <a href="login.html" uk-switcher-item="1">로그인 화면</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-		window.onload = function(){
-			var data = { 
-      UserPoolId : _config.cognito.userPoolId,
-          ClientId : _config.cognito.clientId
+    <script>
+      var username;
+      var password;
+      var personalname;
+      var poolData;
+
+      window.onload = function () {
+        var data = {
+          UserPoolId: _config.cognito.userPoolId,
+          ClientId: _config.cognito.clientId,
+        };
+        var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+        var cognitoUser = userPool.getCurrentUser();
+        //비로그인 상태에서만 들어올 수 있음
+        if (cognitoUser != null) {
+          //로그인상태면 리다이렉트
+          window.location = "index.html";
+        }
       };
-      var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
-      var cognitoUser = userPool.getCurrentUser();
-  //비로그인 상태에서만 들어올 수 있음
-      if (cognitoUser != null) {
-        //로그인상태면 리다이렉트
-        window.location = "index.html";
+
+      function registerButton() {
+        personalname = document.getElementById("personalnameRegister").value;
+        username = document.getElementById("emailInputRegister").value;
+
+        if (
+          document.getElementById("passwordInputRegister").value !=
+          document.getElementById("confirmationpassword").value
+        ) {
+          alert("Passwords Do Not Match!");
+          throw "Passwords Do Not Match!";
+        } else {
+          password = document.getElementById("passwordInputRegister").value;
+        }
+
+        poolData = {
+          UserPoolId: _config.cognito.userPoolId, // Your user pool id here
+          ClientId: _config.cognito.clientId, // Your client id here
+        };
+        var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+
+        var attributeList = [];
+
+        var dataEmail = {
+          Name: "email",
+          Value: username, //get from form field
+        };
+
+        var dataPersonalName = {
+          Name: "name",
+          Value: personalname, //get from form field
+        };
+
+        var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(
+          dataEmail
+        );
+        var attributePersonalName = new AmazonCognitoIdentity.CognitoUserAttribute(
+          dataPersonalName
+        );
+
+        attributeList.push(attributeEmail);
+        attributeList.push(attributePersonalName);
+
+        userPool.signUp(username, password, attributeList, null, function (
+          err,
+          result
+        ) {
+          if (err) {
+            alert(err.message || JSON.stringify(err));
+            return;
+          }
+          let cognitoUser = result.user;
+          console.log("user name is " + cognitoUser.getUsername());
+          //change elements of page
+          //document.getElementById("titleheader").innerHTML = "Check your email for a verification link";
+          alert("이메일을 확인해주세요");
+          window.location = "login.html";
+        });
       }
-}
-			
-	  function registerButton() {
-		
-		personalname =  document.getElementById("personalnameRegister").value;	
-		username = document.getElementById("emailInputRegister").value;
-		
-		if (document.getElementById("passwordInputRegister").value != document.getElementById("confirmationpassword").value) {
-			alert("Passwords Do Not Match!")
-			throw "Passwords Do Not Match!"
-		} else {
-			password =  document.getElementById("passwordInputRegister").value;	
-		}
-		
-		poolData = {
-				UserPoolId : _config.cognito.userPoolId, // Your user pool id here
-				ClientId : _config.cognito.clientId // Your client id here
-			};		
-		var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-
-		var attributeList = [];
-		
-		var dataEmail = {
-			Name : 'email', 
-			Value : username, //get from form field
-		};
-		
-		var dataPersonalName = {
-			Name : 'name', 
-			Value : personalname, //get from form field
-		};
-
-		var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
-		var attributePersonalName = new AmazonCognitoIdentity.CognitoUserAttribute(dataPersonalName);
-		
-		
-		attributeList.push(attributeEmail);
-		attributeList.push(attributePersonalName);
-
-		userPool.signUp(username, password, attributeList, null, function(err, result){
-			if (err) {
-				alert(err.message || JSON.stringify(err));
-				return;
-			}
-			let cognitoUser = result.user;
-			console.log('user name is ' + cognitoUser.getUsername());
-			//change elements of page
-			//document.getElementById("titleheader").innerHTML = "Check your email for a verification link";
-			alert("이메일을 확인해주세요");
-			window.location = "login.html";
-		});
-	  }
-
-	</script>
-</body>
+    </script>
+  </body>
 </html>

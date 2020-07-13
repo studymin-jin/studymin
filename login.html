@@ -2,17 +2,25 @@
 
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-  
-  <!-- Cognito -->
-  <script src="login/amazon-cognito-auth.min.js"></script>
-  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.16.min.js"></script> 
-  <script src="login/amazon-cognito-identity.min.js"></script> 
-  <script src="login/config.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Cognito -->
+    <script src="login/amazon-cognito-auth.min.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.16.min.js"></script>
+    <script src="login/amazon-cognito-identity.min.js"></script>
+    <script src="login/config.js"></script>
 
+    <!-- UIkit CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/css/uikit.min.css"
+    />
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.4/dist/js/uikit-icons.min.js"></script>
   </head>
   <body>
-    <form>
+    <!--<form>
       <h1>Please sign in</h1>
 
       <input type="text" id="inputUsername"  placeholder="Email address" name="username" required autofocus>
@@ -20,104 +28,163 @@
       <button type="button" onclick="signInButton()">Sign in</button>
       <a href="register.html">회원가입</button>
         <button type="button" onclick="forgotpasswordbutton()">비밀번호찾기</button>
-    </form>
+    </form>-->
 
+    <div
+      class="uk-section uk-section-muted uk-flex uk-flex-middle uk-animation-fade"
+      uk-height-viewport
+    >
+      <div class="uk-width-1-1">
+        <div class="uk-container">
+          <div class="uk-grid-margin uk-grid uk-grid-stack" uk-grid>
+            <div class="uk-width-1-1@m">
+              <div
+                class="uk-margin uk-width-large uk-margin-auto uk-card uk-card-default uk-card-body uk-box-shadow-large"
+              >
+                <h3 class="uk-card-title uk-text-center">환영합니다</h3>
+                <div class="uk-margin">
+                  <div class="uk-inline uk-width-1-1">
+                    <span class="uk-form-icon" uk-icon="icon: mail"></span>
+                    <input
+                      class="uk-input uk-form-large"
+                      type="text"
+                      id="inputUsername"
+                      placeholder="이메일"
+                    />
+                  </div>
+                </div>
+                <div class="uk-margin">
+                  <div class="uk-inline uk-width-1-1">
+                    <span class="uk-form-icon" uk-icon="icon: lock"></span>
+                    <input
+                      class="uk-input uk-form-large"
+                      type="password"
+                      id="inputPassword"
+                      placeholder="비밀번호"
+                    />
+                  </div>
+                </div>
+                <div class="uk-margin">
+                  <button
+                    id="btn_login"
+                    class="uk-button uk-button-primary uk-button-large uk-width-1-1"
+                    onclick="signInButton()"
+                  >
+                    로그인
+                  </button>
+                </div>
+                <a
+                  class="uk-button uk-button-default uk-button-large uk-width-1-1"
+                  href="register.html"
+                  >회원가입하기</a
+                >
+                <div class="uk-margin">
+                  <button
+                    class="uk-button uk-button-large uk-width-1-1"
+                    onclick="forgotpasswordbutton()"
+                  >
+                    비밀번호찾기
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<script>
-
-window.onload = function(){
-  var data = { 
-      UserPoolId : _config.cognito.userPoolId,
-          ClientId : _config.cognito.clientId
-      };
-      var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
-      var cognitoUser = userPool.getCurrentUser();
-  //비로그인 상태에서만 들어올 수 있음
-      if (cognitoUser != null) {
-        //로그인상태면 리다이렉트
-        window.location = "index.html";
-      }
-}
-
-  function signInButton() {
-    
-	var authenticationData = {
-        Username : document.getElementById("inputUsername").value,
-        Password : document.getElementById("inputPassword").value,
-    };
-	
-    var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
-    
-	var poolData = {
-        UserPoolId : _config.cognito.userPoolId, // Your user pool id here
-        ClientId : _config.cognito.clientId, // Your client id here
-    };
-	
-    var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-	
-    var userData = {
-        Username : document.getElementById("inputUsername").value,
-        Pool : userPool,
-    };
-	
-    var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
-    
-	cognitoUser.authenticateUser(authenticationDetails, {
-        onSuccess: function (result) {
-			window._accessToken = result.getAccessToken().getJwtToken();
-      console.log(_accessToken);	
-      window.location = "index.html";
-        },
-
-        onFailure: function(err) {
-            alert(err.message || JSON.stringify(err));
-        },
-    });
-  }
-
-  function forgotpasswordbutton() {
-	var poolData = {
-        UserPoolId : _config.cognito.userPoolId, // Your user pool id here
-        ClientId : _config.cognito.clientId, // Your client id here
-    };
-	
-    var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-	
-    if(document.getElementById("inputUsername").value="")
-    {
-      alert("EMAIL을 입력해주세요");
-    }
-
-    var userData = {
-        Username : document.getElementById("inputUsername").value,
-        Pool : userPool,
-    };
-	
-    var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
-		
-    cognitoUser.forgotPassword({
-        onSuccess: function (result) {
-            console.log('call result: ' + result);
-        },
-        onFailure: function(err) {
-            alert(err);
-			console.log(err);
-        },
-        inputVerificationCode() {
-            var verificationCode = prompt('인증코드확인 ' ,'');
-            var newPassword = prompt('새비밀번호 입력 ' ,'');
-            cognitoUser.confirmPassword(verificationCode, newPassword, this);
+    <script>
+      window.onload = function () {
+        var data = {
+          UserPoolId: _config.cognito.userPoolId,
+          ClientId: _config.cognito.clientId,
+        };
+        var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+        var cognitoUser = userPool.getCurrentUser();
+        //비로그인 상태에서만 들어올 수 있음
+        if (cognitoUser != null) {
+          //로그인상태면 리다이렉트
+          window.location = "index.html";
         }
-    });
-  }
-</script>
-</body>
+      };
+
+      function signInButton() {
+        var loginBtn = document.getElementById("btn_login");
+        loginBtn.setAttribute("uk-spinner", null);
+        loginBtn.setAttribute("disabled", null);
+
+        var authenticationData = {
+          Username: document.getElementById("inputUsername").value,
+          Password: document.getElementById("inputPassword").value,
+        };
+
+        var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(
+          authenticationData
+        );
+
+        var poolData = {
+          UserPoolId: _config.cognito.userPoolId, // Your user pool id here
+          ClientId: _config.cognito.clientId, // Your client id here
+        };
+
+        var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+
+        var userData = {
+          Username: document.getElementById("inputUsername").value,
+          Pool: userPool,
+        };
+
+        var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+
+        cognitoUser.authenticateUser(authenticationDetails, {
+          onSuccess: function (result) {
+            window._accessToken = result.getAccessToken().getJwtToken();
+            console.log(_accessToken);
+            window.location = "index.html";
+          },
+
+          onFailure: function (err) {
+            loginBtn.removeAttribute("uk-spinner", null);
+            loginBtn.removeAttribute("disabled", null);
+            alert(err.message || JSON.stringify(err));
+          },
+        });
+      }
+
+      function forgotpasswordbutton() {
+        var poolData = {
+          UserPoolId: _config.cognito.userPoolId, // Your user pool id here
+          ClientId: _config.cognito.clientId, // Your client id here
+        };
+
+        var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+
+        if ((document.getElementById("inputUsername").value = "")) {
+          alert("EMAIL을 입력해주세요");
+        }
+
+        var userData = {
+          Username: document.getElementById("inputUsername").value,
+          Pool: userPool,
+        };
+
+        var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+
+        cognitoUser.forgotPassword({
+          onSuccess: function (result) {
+            console.log("call result: " + result);
+          },
+          onFailure: function (err) {
+            alert(err);
+            console.log(err);
+          },
+          inputVerificationCode() {
+            var verificationCode = prompt("인증코드확인 ", "");
+            var newPassword = prompt("새비밀번호 입력 ", "");
+            cognitoUser.confirmPassword(verificationCode, newPassword, this);
+          },
+        });
+      }
+    </script>
+  </body>
 </html>
-
-
-
-
-
-
-
-
