@@ -131,7 +131,7 @@
                   console.log(err);
                   return;
                 }
-                console.log(result);
+                console.dir(result);
               });
             }
           });
@@ -208,6 +208,35 @@
         <div id="calendar" class="uk-margin-top"></div>
       </div>
     </div>
+    
+    <div class="uk-section" id="section_qna">
+      <div class="uk-container">
+        <div class="uk-container uk-container-large"><button class="uk-button uk-button-default uk-align-right">글쓰기</button></div>
+    <ul uk-accordion>
+      <li>
+          <a class="uk-accordion-title" href="#"><span uk-icon="question"></span> 혹시.. 가격 어쩌구저쩌구 어쩌구저쩌구는 어떻게 되나요??</a>
+          <div class="uk-accordion-content">
+            <p><span uk-icon="comments"></span> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+              <div class="uk-margin">
+                <textarea class="uk-textarea" rows="5" placeholder="Textarea"></textarea>
+              </div>
+          </div>
+      </li>
+      <li>
+          <a class="uk-accordion-title" href="#">Item 2</a>
+          <div class="uk-accordion-content">
+              <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit.</p>
+          </div>
+      </li>
+      <li>
+          <a class="uk-accordion-title" href="#">Item 3</a>
+          <div class="uk-accordion-content">
+              <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat proident.</p>
+          </div>
+      </li>
+  </ul>
+</div>
+</div>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         var calendarEl = document.getElementById("calendar");
