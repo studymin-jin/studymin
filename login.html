@@ -113,6 +113,8 @@
         loginBtn.setAttribute("uk-spinner", null);
         loginBtn.setAttribute("disabled", null);
 
+        console.dir(document.getElementById("inputUsername"));
+
         var authenticationData = {
           Username: document.getElementById("inputUsername").value,
           Password: document.getElementById("inputPassword").value,
@@ -157,9 +159,11 @@
           ClientId: _config.cognito.clientId, // Your client id here
         };
 
+        console.dir(document.getElementById("inputUsername"));
+
         var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
-        if ((document.getElementById("inputUsername").value = "")) {
+        if (document.getElementById("inputUsername").value == "") {
           alert("EMAIL을 입력해주세요");
         }
 

@@ -1,37 +1,41 @@
-import APIHandler from "./api.js";
-const API = new APIHandler();
+import * as API from "./api.js";
+
+const APIIntro = new API.APIHandlerIntro();
+const APIQna = new API.APIHandlerQna();
 
 const getIntroByID = async (_id) => {
-  let promise = await API.getTreeByID(_id);
+  let promise = await APIIntro.getTreeByID(_id);
   let Obj = promise.Item;
 
   let introItem = JSON.parse(Obj);
-  console.log(introItem);
 
   return introItem;
 };
 
 const getIntro = async () => {
-  let Objs = await API.getIntro();
-  console.log(Objs);
+  let Objs = await APIIntro.getIntro();
   renderTable(Objs.Items);
 };
 
+const getQnas = async () => {
+  let Objs = await APIQna.getQnas();
+  renderQna(Objs.Items);
+};
+
 const postIntro = async (Obj) => {
-  if(_accessToken != null)
-  {
-    let id = await API.postIntro(Obj,_accessToken);
+  if (_accessToken != null) {
+    let id = await APIIntro.postIntro(Obj, _accessToken);
     return id;
   }
   return "needLogin";
 };
 
 const updateIntro = async (Obj) => {
-  await API.putCard(Obj);
+  await APIIntro.putCard(Obj);
 };
 
 const deleteIntro = async (_id) => {
-  await API.deleteIntro(_id);
+  await APIIntro.deleteIntro(_id);
 };
 
 const renderTable = (items) => {
@@ -41,10 +45,7 @@ const renderTable = (items) => {
   let plusCardButton = document.querySelector("#plusButton");
   plusCardButton.onclick = plusCard;
 
-  console.log(_config);
   items.forEach((item) => {
-    console.log(item);
-
     let card = document.createElement("div");
     card.className = "uk-card uk-card-default uk-card-body";
     card.id = item.id;
@@ -81,6 +82,82 @@ const renderTable = (items) => {
   });
 };
 
+const renderQna = (items) => {
+  const ul = document.querySelector("#ul_qna");
+
+  items.forEach((item) => {
+    console.log(item);
+    if (item.subid == 0) {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.className = "uk-accordion-title";
+      a.id = item.id;
+      a.name = item.seq;
+
+      const spanI = document.createElement("span");
+      spanI.setAttribute("uk-icon", "question");
+
+      const spanC = document.createElement("span");
+      spanC.innerText = " " + item.content;
+
+      a.appendChild(spanI);
+      a.appendChild(spanC);
+      li.appendChild(a);
+      ul.appendChild(li);
+    }
+  });
+
+  var liArray = Array.from(ul.children);
+  liArray.forEach((li) => {
+    const divcontent = document.createElement("div");
+    divcontent.className = "uk-accordion-content";
+    items.forEach((item) => {
+      if (item.subid != 0) {
+        const title = li.querySelector(".uk-accordion-title");
+        if (item.seq == title.name) {
+          const p = document.createElement("p");
+          p.id = item.id;
+
+          const spanS = document.createElement("span");
+          spanS.innerHTML = "&nbsp;&nbsp;";
+
+          const spanI = document.createElement("span");
+          spanI.setAttribute("uk-icon", "comments");
+
+          const spanC = document.createElement("span");
+          spanC.innerText = " " + item.content;
+
+          p.appendChild(spanS);
+          p.appendChild(spanI);
+          p.appendChild(spanC);
+          divcontent.appendChild(p);
+        }
+      }
+    });
+    const divmargin = document.createElement("div");
+    divmargin.className = "uk-margin";
+
+    const divflex = document.createElement("div");
+    divflex.className = "uk-flex";
+
+    const textarea = document.createElement("textarea");
+    textarea.className = "uk-textarea";
+    textarea.rows = 5;
+    textarea.placeholder = "댓글을 입력해 주세요.";
+
+    const btnwrite = document.createElement("button");
+    btnwrite.className =
+      "uk-button uk-button-default uk-height-1-3 uk-margin-left";
+    btnwrite.innerText = "입력";
+
+    divflex.appendChild(textarea);
+    divflex.appendChild(btnwrite);
+    divmargin.appendChild(divflex);
+    divcontent.appendChild(divmargin);
+    li.appendChild(divcontent);
+  });
+};
+
 const deleteCard = (event) => {
   let cardElement = event.target.parentNode;
   deleteIntro(cardElement.id);
@@ -94,19 +171,16 @@ const plusCard = (event) => {
   cardElement.modidt = modidt.value;
 
   let id = postIntro(cardElement);
-  id.then((data)=>{
-    if(data == "needLogin"){
+  id.then((data) => {
+    if (data == "needLogin") {
       alert("로그인 후 다시 입력해주세요");
-    }else
-    {
+    } else {
       alert("입력성공 f5눌러주세요");
     }
-  })
+  });
 
   desc.value = "";
   modidt.value = "";
-
-  
 };
 
 const toggleShow = (event) => {
@@ -119,4 +193,6 @@ const toggleShow = (event) => {
   let inputArea = document.querySelector(".inputArea");
   inputArea.style.display = "none";
   const items = getIntro();
+
+  getQnas();
 })();

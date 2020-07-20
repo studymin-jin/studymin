@@ -1,13 +1,11 @@
 class APIRequest {
-  constructor(method, path, body = null,accesstoken=null) {
+  constructor(method, path, body = null, accesstoken = null) {
     this.method = method;
-    this.url = HOST + path;
+    this.url = path;
     this.body = body;
     this.accesstoken = accesstoken;
   }
 }
-
-const HOST = "https://9exn85jyp0.execute-api.ap-northeast-2.amazonaws.com/prod";
 
 const APIProcessor = async (request) => {
   try {
@@ -18,7 +16,7 @@ const APIProcessor = async (request) => {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        "X-Cog-Token": request.accesstoken,
+        //"X-Cog-Token": request.accesstoken,
       },
       body: request.body ? JSON.stringify(request.body) : null, // body data type must match "Content-Type" header
     });
@@ -37,14 +35,22 @@ const APIProcessor = async (request) => {
   return "Error";
 };
 
-export default class APIHandler {
-  constructor() {}
+export class APIHandlerIntro {
+  constructor() {
+    this.host =
+      "https://9exn85jyp0.execute-api.ap-northeast-2.amazonaws.com/prod";
+  }
 
-  async postIntro(Obj,accesstoken) {
-    const request = new APIRequest("POST", "/intro/", {
-      desc: Obj.desc,
-      modidt: Obj.modidt,
-    },accesstoken);
+  async postIntro(Obj, accesstoken) {
+    const request = new APIRequest(
+      "POST",
+      this.host + "/intro/",
+      {
+        desc: Obj.desc,
+        modidt: Obj.modidt,
+      },
+      accesstoken
+    );
     const response = await APIProcessor(request);
     if (response != "Error") {
       console.log(response);
@@ -54,23 +60,21 @@ export default class APIHandler {
     }
   }
 
-  // TODO: 전체 카드 객체 리스트 반환. 없으면 NULL
+  // Intro CRUD
   async getIntro() {
-    const request = new APIRequest("GET", "/intro");
+    const request = new APIRequest("GET", this.host + "/intro");
     const processor = await APIProcessor(request);
-    console.log(processor);
     return processor;
   }
 
   async getIntroById(_id) {
-    const request = new APIRequest("GET", "/intro/" + _id);
+    const request = new APIRequest("GET", this.host + "/intro/" + _id);
     const processor = await APIProcessor(request);
-    console.log(processor);
     return processor;
   }
 
   async putIntro(Obj) {
-    const request = new APIRequest("PUT", "/intro/" + Obj.id, {
+    const request = new APIRequest("PUT", this.host + "/intro/" + Obj.id, {
       desc: Obj.desc,
       modidt: Obj.modidt,
     });
@@ -78,7 +82,21 @@ export default class APIHandler {
   }
 
   async deleteIntro(_id) {
-    const request = new APIRequest("DELETE", "/intro/" + _id);
+    const request = new APIRequest("DELETE", this.host + "/intro/" + _id);
     await APIProcessor(request);
+  }
+}
+
+export class APIHandlerQna {
+  constructor() {
+    this.host =
+      "https://dip1p488d6.execute-api.ap-northeast-2.amazonaws.com/prod";
+  }
+
+  // QnA CRUD
+  async getQnas() {
+    const request = new APIRequest("GET", this.host + "/qna");
+    const processor = await APIProcessor(request);
+    return processor;
   }
 }
