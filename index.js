@@ -22,6 +22,11 @@ const getQnas = async () => {
   renderQna(Objs.Items);
 };
 
+const postQna = async (Obj) => {
+  let seq = await APIQna.postQna(Obj);
+  return seq;
+};
+
 const postIntro = async (Obj) => {
   if (_accessToken != null) {
     let id = await APIIntro.postIntro(Obj, _accessToken);
@@ -85,13 +90,13 @@ const renderTable = (items) => {
 const renderQna = (items) => {
   const ul = document.querySelector("#ul_qna");
 
+  //질문들
   items.forEach((item) => {
     console.log(item);
     if (item.subid == 0) {
       const li = document.createElement("li");
       const a = document.createElement("a");
       a.className = "uk-accordion-title";
-      a.id = item.id;
       a.name = item.seq;
 
       const spanI = document.createElement("span");
@@ -107,6 +112,7 @@ const renderQna = (items) => {
     }
   });
 
+  //질문코멘트들
   var liArray = Array.from(ul.children);
   liArray.forEach((li) => {
     const divcontent = document.createElement("div");
@@ -116,7 +122,7 @@ const renderQna = (items) => {
         const title = li.querySelector(".uk-accordion-title");
         if (item.seq == title.name) {
           const p = document.createElement("p");
-          p.id = item.id;
+          p.id = item.subid;
 
           const spanS = document.createElement("span");
           spanS.innerHTML = "&nbsp;&nbsp;";
@@ -189,10 +195,71 @@ const toggleShow = (event) => {
   else inputArea.style.display = "none";
 };
 
+const clickWriteQna = (event) => {
+  const textarea = document.querySelector("#modal_text");
+  let obj = new Object();
+  obj.content = textarea.value;
+  obj.writer = "yybinTestUser";
+  obj.regdt = "2020-07-21";
+  obj.modidt = "2020-07-21";
+  const seq = postQna(obj);
+  seq.then((data) => {
+    if (data != "") {
+      const ul = document.querySelector("#ul_qna");
+
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.className = "uk-accordion-title";
+      a.name = data.seq;
+
+      const spanI = document.createElement("span");
+      spanI.setAttribute("uk-icon", "question");
+
+      const spanC = document.createElement("span");
+      spanC.innerText = " " + obj.content;
+
+      a.appendChild(spanI);
+      a.appendChild(spanC);
+      li.appendChild(a);
+      ul.insertBefore(li, ul.firstChild);
+
+      const divcontent = document.createElement("div");
+      divcontent.className = "uk-accordion-content";
+
+      const divmargin = document.createElement("div");
+      divmargin.className = "uk-margin";
+
+      const divflex = document.createElement("div");
+      divflex.className = "uk-flex";
+
+      const textarea = document.createElement("textarea");
+      textarea.className = "uk-textarea";
+      textarea.rows = 5;
+      textarea.placeholder = "댓글을 입력해 주세요.";
+
+      const btnwrite = document.createElement("button");
+      btnwrite.className =
+        "uk-button uk-button-default uk-height-1-3 uk-margin-left";
+      btnwrite.innerText = "입력";
+
+      divflex.appendChild(textarea);
+      divflex.appendChild(btnwrite);
+      divmargin.appendChild(divflex);
+      divcontent.appendChild(divmargin);
+      li.appendChild(divcontent);
+
+      ul.removeChild(ul.lastChild);
+    }
+  });
+};
+
 (() => {
   let inputArea = document.querySelector(".inputArea");
   inputArea.style.display = "none";
   const items = getIntro();
+
+  let writeQna = document.querySelector("#modal_writeQna");
+  writeQna.onclick = clickWriteQna;
 
   getQnas();
 })();

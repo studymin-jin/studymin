@@ -99,4 +99,20 @@ export class APIHandlerQna {
     const processor = await APIProcessor(request);
     return processor;
   }
+
+  async postQna(Obj) {
+    const request = new APIRequest("POST", this.host + "/qna", {
+      content: Obj.content,
+      writer: Obj.writer,
+      regdt: Obj.regdt,
+      modidt: Obj.modidt,
+    });
+    const response = await APIProcessor(request);
+    if (response != "Error") {
+      console.log(response);
+      return response.seq;
+    } else {
+      return null;
+    }
+  }
 }

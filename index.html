@@ -67,6 +67,14 @@
               >
             </li>
             <li>
+              <a
+                href="#section_qna"
+                uk-scroll
+                uk-toggle="target:.toggle-target; cls:collapsed"
+                >질문</a
+              >
+            </li>
+            <li>
               <a id="nav_loginInfo"></a>
             </li>
           </ul>
@@ -212,7 +220,7 @@
     <div class="uk-section" id="section_qna">
       <div class="uk-container">
         <div class="uk-container uk-container-large">
-          <button class="uk-button uk-button-default uk-align-right">
+          <button class="uk-button uk-button-default uk-align-right" id='open-modal' uk-toggle="target: #modal-id" href="#">
             글쓰기
           </button>
         </div>
@@ -256,5 +264,22 @@
         calendar.render();
       });
     </script>
+
+<div id="modal-id" uk-modal>
+  <div class="uk-modal-dialog">
+      <button class="uk-modal-close-default" type="button" uk-close></button>
+      <div class="uk-modal-header">
+          <h2 class="uk-modal-title">질문</h2>
+      </div>
+      <div class="uk-modal-body">
+        <div class="uk-margin">
+          <textarea id="modal_text" class = "uk-textarea" rows="10" placeholder="질문을 입력해주세요"></textarea>
+          </div>
+      </div>
+      <div class="uk-modal-footer uk-text-right">
+          <button id="modal_writeQna" class="uk-button uk-button-primary uk-modal-close" type="button" >질문하기</button>
+      </div>
+  </div>
+</div>
   </body>
 </html>
