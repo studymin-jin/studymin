@@ -19,11 +19,21 @@ const getIntro = async () => {
 
 const getQnas = async () => {
   let Objs = await APIQna.getQnas();
-  renderQna(Objs.Items);
+  renderQna(Objs);
+};
+
+const getQnaComments = async (subid, li) => {
+  let Objs = await APIQna.getQnaComments(subid);
+  renderQnaComment(Objs, li);
 };
 
 const postQna = async (Obj) => {
   let seq = await APIQna.postQna(Obj);
+  return seq;
+};
+
+const postComment = async (Obj) => {
+  let seq = await APIQna.postComment(Obj);
   return seq;
 };
 
@@ -87,40 +97,93 @@ const renderTable = (items) => {
   });
 };
 
-const renderQna = (items) => {
-  const ul = document.querySelector("#ul_qna");
-
-  //질문들
-  items.forEach((item) => {
+const renderQnaComment = (obj, li) => {
+  const comments = obj.Items;
+  //질문코멘트들
+  const divcontent = document.createElement("div");
+  divcontent.className = "uk-accordion-content";
+  divcontent.setAttribute("hidden", "");
+  comments.forEach((item) => {
     console.log(item);
-    if (item.subid == 0) {
-      const li = document.createElement("li");
-      const a = document.createElement("a");
-      a.className = "uk-accordion-title";
-      a.name = item.seq;
+    const title = li.querySelector(".uk-accordion-title");
+    if (item.subid == title.name) {
+      const p = document.createElement("p");
+      p.id = item.subid;
+
+      const spanS = document.createElement("span");
+      spanS.innerHTML = "&nbsp;&nbsp;";
 
       const spanI = document.createElement("span");
-      spanI.setAttribute("uk-icon", "question");
+      spanI.setAttribute("uk-icon", "comments");
 
       const spanC = document.createElement("span");
       spanC.innerText = " " + item.content;
 
-      a.appendChild(spanI);
-      a.appendChild(spanC);
-      li.appendChild(a);
-      ul.appendChild(li);
+      p.appendChild(spanS);
+      p.appendChild(spanI);
+      p.appendChild(spanC);
+      divcontent.appendChild(p);
     }
+  });
+  const divmargin = document.createElement("div");
+  divmargin.className = "uk-margin";
+
+  const divflex = document.createElement("div");
+  divflex.className = "uk-flex";
+
+  const textarea = document.createElement("textarea");
+  textarea.className = "uk-textarea";
+  textarea.rows = 5;
+  textarea.placeholder = "댓글을 입력해 주세요.";
+
+  const btnwrite = document.createElement("button");
+  btnwrite.className =
+    "uk-button uk-button-default uk-height-1-3 uk-margin-left";
+  btnwrite.innerText = "입력";
+  btnwrite.onclick = clickWriteQnaComments;
+
+  divflex.appendChild(textarea);
+  divflex.appendChild(btnwrite);
+  divmargin.appendChild(divflex);
+  divcontent.appendChild(divmargin);
+  li.appendChild(divcontent);
+};
+
+const renderQna = (obj) => {
+  const ul = document.querySelector("#ul_qna");
+  const questions = obj.Items;
+  //const comments = obj.comments.Items;
+  //질문들
+  questions.forEach((item) => {
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.className = "uk-accordion-title";
+    a.name = item.seq;
+
+    const spanI = document.createElement("span");
+    spanI.setAttribute("uk-icon", "question");
+
+    const spanC = document.createElement("span");
+    spanC.innerText = " " + item.content;
+
+    a.appendChild(spanI);
+    a.appendChild(spanC);
+    li.appendChild(a);
+    ul.appendChild(li);
+
+    getQnaComments(item.seq, li);
   });
 
   //질문코멘트들
-  var liArray = Array.from(ul.children);
+  /*var liArray = Array.from(ul.children);
   liArray.forEach((li) => {
     const divcontent = document.createElement("div");
     divcontent.className = "uk-accordion-content";
-    items.forEach((item) => {
+    comments.forEach((item) => {
       if (item.subid != 0) {
+        console.log(item);
         const title = li.querySelector(".uk-accordion-title");
-        if (item.seq == title.name) {
+        if (item.subid == title.name) {
           const p = document.createElement("p");
           p.id = item.subid;
 
@@ -155,13 +218,14 @@ const renderQna = (items) => {
     btnwrite.className =
       "uk-button uk-button-default uk-height-1-3 uk-margin-left";
     btnwrite.innerText = "입력";
+    btnwrite.onclick = clickWriteQnaComments;
 
     divflex.appendChild(textarea);
     divflex.appendChild(btnwrite);
     divmargin.appendChild(divflex);
     divcontent.appendChild(divmargin);
     li.appendChild(divcontent);
-  });
+  });*/
 };
 
 const deleteCard = (event) => {
@@ -193,6 +257,21 @@ const toggleShow = (event) => {
   let inputArea = document.querySelector(".inputArea");
   if (inputArea.style.display == "none") inputArea.style.display = "block";
   else inputArea.style.display = "none";
+};
+
+const clickWriteQnaComments = (event) => {
+  const seq =
+    event.target.parentNode.parentNode.parentNode.parentNode.childNodes[0].name;
+  const textarea = event.target.parentNode.childNodes[0];
+
+  let obj = new Object();
+  obj.seq = seq;
+  obj.content = textarea.value;
+  obj.writer = "yybinTestUser";
+  obj.regdt = "2020-07-27";
+  obj.modidt = "2020-07-27";
+
+  postComment(obj);
 };
 
 const clickWriteQna = (event) => {
