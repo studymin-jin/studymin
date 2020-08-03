@@ -1,7 +1,0 @@
-qna 
-
-id = 시퀀스
-commentnum
-content
-writer
-regdt
