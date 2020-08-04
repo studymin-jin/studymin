@@ -33,8 +33,8 @@ const postQna = async (Obj) => {
 };
 
 const postComment = async (Obj) => {
-  let seq = await APIQna.postComment(Obj);
-  return seq;
+  let subid = await APIQna.postComment(Obj);
+  return subid;
 };
 
 const postIntro = async (Obj) => {
@@ -52,6 +52,8 @@ const updateIntro = async (Obj) => {
 const deleteIntro = async (_id) => {
   await APIIntro.deleteIntro(_id);
 };
+
+const renderComment = (subid) => {};
 
 const renderTable = (items) => {
   let introContainer = document.querySelector(".introContainer");
@@ -260,8 +262,9 @@ const toggleShow = (event) => {
 };
 
 const clickWriteQnaComments = (event) => {
-  const seq =
-    event.target.parentNode.parentNode.parentNode.parentNode.childNodes[0].name;
+  const li = event.target.parentNode.parentNode.parentNode.parentNode;
+  const content = li.childNodes[1];
+  const seq = li.childNodes[0].name;
   const textarea = event.target.parentNode.childNodes[0];
 
   let obj = new Object();
@@ -271,7 +274,27 @@ const clickWriteQnaComments = (event) => {
   obj.regdt = "2020-07-27";
   obj.modidt = "2020-07-27";
 
-  postComment(obj);
+  const subid = postComment(obj);
+  if (subid != null) {
+    const p = document.createElement("p");
+    p.id = subid;
+
+    const spanS = document.createElement("span");
+    spanS.innerHTML = "&nbsp;&nbsp;";
+
+    const spanI = document.createElement("span");
+    spanI.setAttribute("uk-icon", "comments");
+
+    const spanC = document.createElement("span");
+    spanC.innerText = " " + textarea.value;
+
+    p.appendChild(spanS);
+    p.appendChild(spanI);
+    p.appendChild(spanC);
+    content.insertBefore(p, content.firstChild);
+  }
+
+  textarea.value = "";
 };
 
 const clickWriteQna = (event) => {
@@ -330,6 +353,8 @@ const clickWriteQna = (event) => {
       ul.removeChild(ul.lastChild);
     }
   });
+
+  textarea.value = "";
 };
 
 (() => {

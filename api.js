@@ -132,7 +132,7 @@ export class APIHandlerQna {
     const response = await APIProcessor(request);
     if (response != "Error") {
       console.log(response);
-      return response.seq;
+      return response.subid;
     } else {
       return null;
     }
